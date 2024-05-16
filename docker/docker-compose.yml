@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_INITDB_DATABASE=db
+  
+  backend:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    command: bash -c "chmod +x docker/entrypoint.sh && sh docker/entrypoint.sh"
+    restart: always
+    volumes:
+        - ../:/app
+    environment:
+      - JWT_SECRET=uDQs2sC8L6LDufZMdAdyhpge1rZPrj0XhYyxBBg8hCs=
+      -  JWT_ALGORITHM=HS256
+      -  MONGO_INITDB_DATABASE=db
+      -  MONGO_INITDB_ROOT_USERNAME=root
+      -  MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      -  MONGO_HOST=mongo
+    ports:
+      - "8001:8001"

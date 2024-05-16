@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from datetime import datetime
 from d_1 import *
 from d_2 import *
-
+from uvicorn import run
 router = FastAPI()
 
 from tools import create_paginate_response
@@ -36,3 +36,6 @@ async def all_payout(
         match['status'] = {'$in': status_list}
 
     return await create_paginate_response(page, payout_collection, match)
+
+if __name__ == "__main__":
+    run(router, host="0.0.0.0", port=8001)
