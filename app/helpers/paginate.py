@@ -1,16 +1,21 @@
 import datetime
 from typing import List
+
+from bson.objectid import ObjectId
 from fastapi import HTTPException
 from pymongo.cursor import Cursor
-from bson.objectid import ObjectId
-from app.helpers.d_2 import wallet_collection
+
+from app.helpers import DEFAULT_PAGE_SIZE
+from db import wallet_collection
 
 
 async def check_is_valid_objectId(id):
     try:
         return ObjectId(id)
-    except:
+    except Exception as e:
+        print(e)
         raise HTTPException(detail="not valid object id", status_code=400)
+
 
 async def create_paginate_response(page, collection, match, add_wallet=False):
     page, total_docs, result = await paginate_results(
@@ -24,6 +29,7 @@ async def create_paginate_response(page, collection, match, add_wallet=False):
         "results": result,
     }
 
+
 async def paginate_results(page, collection, match, add_wallet=False):
     total_docs = 0
     if page is None:
@@ -32,8 +38,7 @@ async def paginate_results(page, collection, match, add_wallet=False):
         for index, doc in enumerate(result):
             doc["_id"] = str(doc["_id"])
             if "affiliate_tracking_id" in doc:
-                doc["affiliate_tracking_id"] = str(
-                    doc["affiliate_tracking_id"])
+                doc["affiliate_tracking_id"] = str(doc["affiliate_tracking_id"])
             if "user_id" in doc:
                 doc["user_id"] = str(doc["user_id"])
 
@@ -66,7 +71,7 @@ async def check_available_balance(user_id):
     wallet = wallet_collection.find_one({"user_id": user_id})
 
     # Calculate the available and pending balance
-    available_balance = wallet['available_balance']
+    available_balance = wallet["available_balance"]
     pending_balance = 0
     transactions_to_delete = []
     for transaction in wallet["transactions"]:
@@ -84,20 +89,15 @@ async def check_available_balance(user_id):
                 "available_balance": available_balance,
                 "pending_balance": pending_balance,
             },
-            "$pull": {
-                "transactions": {"id": {"$in": transactions_to_delete}}
-            },
+            "$pull": {"transactions": {"id": {"$in": transactions_to_delete}}},
         },
     )
     return available_balance, pending_balance
 
 
-
-
 async def snake_to_camel(snake_str):
     components = snake_str.split("_")
     return components[0] + "".join(x.title() for x in components[1:])
-
 
 
 async def convert_dict_camel_case(data):

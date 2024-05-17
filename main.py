@@ -1,11 +1,10 @@
 from fastapi import FastAPI
-from app.helpers.d_1 import *
-from app.helpers.d_2 import *
 from uvicorn import run
-router = FastAPI()
 
-from tools import create_paginate_response
+from app.routers import router
 
+app = FastAPI()
+app.include_router(router=router)
 
 if __name__ == "__main__":
-    run(router, host="0.0.0.0", port=8001)
+    run(app, host="0.0.0.0", port=8001)

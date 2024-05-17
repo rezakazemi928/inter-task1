@@ -1,20 +1,25 @@
-from fastapi import HTTPException, Header
-import jwt , os
-from app.helpers.d_2 import user_collection
+import os
+
+import jwt
+from fastapi import Header, HTTPException
+
+from db import user_collection
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 expiration_time = os.getenv("JWT_EXPIRATION_MINUTES") or 0
 JWT_EXPIRATION_MINUTES = int(expiration_time)
 
+
 async def check_user_is_admin(authorization: str = Header(...)):
     email = await get_email_from_token(authorization)
-    user = user_collection.find_one({'email': email})
+    user = user_collection.find_one({"email": email})
     if user is None:
-        raise HTTPException(detail='User not found', status_code=404)
-    if user['user_type'] != 'admin':
-        raise HTTPException(detail='User is not Admin', status_code=400)
+        raise HTTPException(detail="User not found", status_code=404)
+    if user["user_type"] != "admin":
+        raise HTTPException(detail="User is not Admin", status_code=400)
     return user
+
 
 async def get_email_from_token(authorization: str = Header(...)):
     try:
@@ -25,13 +30,15 @@ async def get_email_from_token(authorization: str = Header(...)):
         raise HTTPException(detail="Invalid token", status_code=400)
     return email
 
+
 def decode_jwt_token(token: str):
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return payload
     except jwt.PyJWTError:
         return {}
-    
+
+
 async def get_status_list_from_query(statuses):
     status_list = statuses.split(",")
     lst = []
