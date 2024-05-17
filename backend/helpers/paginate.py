@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 from fastapi import HTTPException
 from pymongo.cursor import Cursor
 
-from app.helpers import DEFAULT_PAGE_SIZE
+from backend.helpers import DEFAULT_PAGE_SIZE
 from db import wallet_collection
 
 
