@@ -9,6 +9,7 @@ uvicorn = "*"
 pymongo = "*"
 python-dotenv = "*"
 pyjwt = "*"
+pre-commit = "*"
 
 [dev-packages]
 
