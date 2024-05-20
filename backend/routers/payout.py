@@ -1,13 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from backend.helpers import (
-    check_user_is_admin,
-    create_paginate_response,
-    get_status_list_from_query,
-)
+from backend.helpers import create_paginate_response, get_status_list_from_query
 from db import payout_collection
 
 router = APIRouter()
@@ -22,7 +18,7 @@ async def all_payout(
     user_type: Optional[str] = None,
     payment_start_date: Optional[datetime] = None,
     payment_end_date: Optional[datetime] = None,
-    admin: str = Depends(check_user_is_admin),
+    # admin: str = Depends(check_user_is_admin),
 ):
     match = {"created": {}, "payment_date": {}}
 

@@ -8,7 +8,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=rootpassword
       - MONGO_INITDB_DATABASE=db
-  
+    networks:
+      - new_net
+
   backend:
     build:
       context: ../
@@ -19,10 +21,16 @@ services:
         - ../:/app
     environment:
       - JWT_SECRET=uDQs2sC8L6LDufZMdAdyhpge1rZPrj0XhYyxBBg8hCs=
-      -  JWT_ALGORITHM=HS256
-      -  MONGO_INITDB_DATABASE=db
-      -  MONGO_INITDB_ROOT_USERNAME=root
-      -  MONGO_INITDB_ROOT_PASSWORD=rootpassword
-      -  MONGO_HOST=mongo
+      - JWT_ALGORITHM=HS256
+      - MONGO_INITDB_DATABASE=db
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_HOST=mongo
     ports:
       - "8001:8001"
+    networks:
+      - new_net
+
+networks:
+  new_net:
+    name: new_net
